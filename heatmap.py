@@ -259,56 +259,56 @@ with tab2:
         st.header("Шинжилгээнээс гарсэн график мэдээллүүд")
         st.markdown("Смарт картын өгөгдөлд 2 өдөр байсан. Үүнд эхнийх нь нэг дахь өдөр буюу жирийн ажлын өдөр 3 сарын 6-н, нөгөө нь 3 сарын 8-н буюу бүх нийтийн амралтын өдөр Мартын 8-н байсан. Heatmap-д үзүүлсэн 3 сарын 6-ны жирийн өдөр нь Улаанбаатар хотын жирийн нэгэн дундаж түгжрээтэй өдөр тул heatmap-д сонгосон болно. Мөн өгөгдсөн өгөгдөл дээр байршлийг нэмж оруулахад 20 мянган nan value өгсөн нь нийт датаны нэг хувь байсан тул heatmap-д оруулагүй ба үүнд Монгол улсын их сургуулийн буудал багтсанд хүлцэл өчий.")
         st.markdown("Цаашид баяжуулах төлөвлөгөөний хувьд би сургуулиудын байршлыг оруулан хамгийн их ачаалалтай байршилд байгаа сургуулиудыг тодруулахыг хүсэж байна. Мөн автобусны чиглэлийн зам дагуу байдлаар 2D heatmap тус цагын тус байрлалын дундаж хурдаар нь хийж өгвөл улаанбаатрын түгжрэлийг googlemap-ийн улаан шар ногоон өнгөөс илүү бодитоогоор харж чадна гэж бодож байна.")
-        image1 = Image.open('1.jpg')
+        image1 = Image.open('1.JPG')
         st.caption("   *Хоцрохгүйг хичээж байгаатай холбоотойгоор өглөө бол нийтийн тээврийн хамгийн их ачааллын үе.")
         st.image(image1, caption='Зураг 1')
         
         st.caption("   *Харин амралтын өдөр бол өөр хэрэг.")
-        image2 = Image.open('2.jpg')
+        image2 = Image.open('2.JPG')
         st.image(image2, caption='Зураг 2')
         
         st.caption("   *Дараах графикаас насны онцлогийг харж болно.")
-        image3 = Image.open('3.jpg')
+        image3 = Image.open('3.JPG')
         st.image(image3, caption='Зураг 3')
         
         st.caption("   *Ахмадууд маань мартын 8-нд арай илүү идвэхитэй байна.")
-        image4 = Image.open('4.jpg')
+        image4 = Image.open('4.JPG')
         st.image(image4, caption='Зураг 4')
         
-        image5 = Image.open('5.jpg')
+        image5 = Image.open('5.JPG')
         st.image(image5, caption='Зураг 5')
         st.markdown("Ч-1 нь Таван шар-Офицеруудын ордон чиглэлийн автобус бол Ч-59 нь ХМК-Офицеруудын ордон чиглэлийн тролейбус юм.")
         
         
-        image6 = Image.open('6.jpg')
+        image6 = Image.open('6.JPG')
         st.image(image6, caption='Зураг 6')
         
         st.caption("   *Төв замын автобуснууд хамгийн их ачаалалтай байна.")
-        image7= Image.open('7.jpg')
+        image7= Image.open('7.JPG')
         st.image(image7, caption='Зураг 7')
         
-        image8 = Image.open('8.jpg')
+        image8 = Image.open('8.JPG')
         st.image(image8, caption='Зураг 8')
             
-        image9 = Image.open('9.jpg')
+        image9 = Image.open('9.JPG')
         st.image(image9, caption='Зураг 9')
         
-        image10 = Image.open('10.jpg')
+        image10 = Image.open('10.JPG')
         st.image(image10, caption='Зураг 10')
         
-        image11 = Image.open('11.jpg')
+        image11 = Image.open('11.JPG')
         st.image(image11 , caption='Зураг 11 ')
         
-        image12  = Image.open('12.jpg')
+        image12  = Image.open('12.JPG')
         st.image(image12, caption='Зураг 12')
          
         st.caption("   *Смарт карт өгөгдлийн хоорондын хамаарал.")    
-        image13 = Image.open('13.jpg')
+        image13 = Image.open('13.JPG')
         st.image(image13, caption='Зураг 13')
         
         
         st.caption("   *Автобусанд картаа дарсан хүмүүсийн харьцаа.")
-        image14 = Image.open('14.jpg')
+        image14 = Image.open('14.JPG')
         st.image(image14, caption='Зураг 14')
         
         st.header("Анхаарал тавьсанд баярлалаа")
