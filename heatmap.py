@@ -201,7 +201,7 @@ with tab1:
 
     with row2_1:
         st.write(
-            f"""**Автобусны буудлуудын автобусанд суух ачаалал, {hour_selected}:00 болон {(hour_selected + 1) % 24}:00 цагийн хооронд**"""
+            f"""**Автобусны буудлуудаас автобусанд суух ачаалал, {hour_selected}:00 болон {(hour_selected + 1) % 24}:00 цагийн хооронд**"""
         )
         map(filterdata(data, hour_selected), midpoint[0], midpoint[1], 11)
 
