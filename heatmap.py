@@ -264,7 +264,7 @@ with tab2:
         st.image(image1, caption='Зураг 1')
         
         st.caption("   *Харин амралтын өдөр бол өөр хэрэг.")
-        image2 = Image.open('2.JPG')
+        image2 = Image.open('2.jpg')
         st.image(image2, caption='Зураг 2')
         
         st.caption("   *Дараах графикаас насны онцлогийг харж болно.")
