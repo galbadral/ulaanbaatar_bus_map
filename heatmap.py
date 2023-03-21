@@ -213,7 +213,7 @@ with tab1:
 
 
 
-    all_data=pd.read_csv("df.csv")
+    all_data=pd.read_csv("df.csv.gz")
     if genre != "Нийт":
         sorted_genre = all_data.loc[all_data['Төрөл'].isin([str(genre)])]
     else:
