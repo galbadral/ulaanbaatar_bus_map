@@ -11,7 +11,7 @@ from PIL import Image
 st.set_page_config(layout="wide", page_title="Улаанбаатрын автобусний эрэлтийг шинжлэх нь", page_icon=":taxi:")
 
 
-#@st.cache_resource
+@st.cache_resource
 def load_data(x):
     #path = "combined."
     #if not os.path.isfile(path):
@@ -109,17 +109,17 @@ def map_off(data, lat, lon, zoom):
     )
 
 
-
+@st.cache_data
 def filterdata(df, hour_selected):
     return df[df["date/time"].dt.hour == hour_selected]
 
 
-
+@st.cache_data
 def mpoint(lat, lon):
     return (np.average(lat), np.average(lon))
 
 
-
+@st.cache_data
 def histdata(df, hr):
     filtered = data[
         (df["date/time"].dt.hour >= hr) & (df["date/time"].dt.hour < (hr + 1))
