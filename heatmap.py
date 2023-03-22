@@ -11,14 +11,14 @@ from PIL import Image
 st.set_page_config(layout="wide", page_title="Улаанбаатрын автобусний эрэлтийг шинжлэх нь", page_icon=":taxi:")
 
 
-@st.cache_resource
+#@st.cache_resource
 def load_data(x):
     #path = "combined."
     #if not os.path.isfile(path):
         #path = f"https://github.com/streamlit/demo-uber-nyc-pickups/raw/main/{path}"
 
     data = pd.read_csv(
-        str(x)+'.csv',
+        str(x)+'.csv.gz',
         #nrows=100000,  # approx. 10% of data
         names=[
             "date/time",
@@ -40,7 +40,7 @@ def load_data_off(x):
         #path = f"https://github.com/streamlit/demo-uber-nyc-pickups/raw/main/{path}"
 
     data = pd.read_csv(
-        str(x)+'_off.csv',
+        str(x)+'_off.csv.gz',
         #nrows=100000,  # approx. 10% of data
         names=[
             "date/time",
@@ -109,17 +109,17 @@ def map_off(data, lat, lon, zoom):
     )
 
 
-@st.cache_data
+#@st.cache_data
 def filterdata(df, hour_selected):
     return df[df["date/time"].dt.hour == hour_selected]
 
 
-@st.cache_data
+#@st.cache_data
 def mpoint(lat, lon):
     return (np.average(lat), np.average(lon))
 
 
-@st.cache_data
+#@st.cache_data
 def histdata(df, hr):
     filtered = data[
         (df["date/time"].dt.hour >= hr) & (df["date/time"].dt.hour < (hr + 1))
@@ -174,11 +174,13 @@ with tab1:
             "Цаг сонгох:", 0, 23, key="pickup_hour", on_change=update_query_params
         )
     with row11_2:
-        genre = st.radio("Зорчигчийн төрөл сонгох:",('Нийт', 'Сурагч', 'Ахмад','Оюутан'),horizontal = True)
+        genre = st.radio("Зорчигчийн төрөл сонгох:",('Нийт','Энгийн', 'Сурагч', 'Ахмад','Оюутан'),horizontal = True)
 
     choice='combined'
     if genre == 'Нийт':
         choice='combined'
+    elif genre =='Энгийн':
+        choice= 'normal'
     elif genre=='Сурагч':
         choice='student'
     elif genre=='Ахмад':
