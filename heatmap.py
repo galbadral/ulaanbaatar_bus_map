@@ -10,15 +10,15 @@ from PIL import Image
 
 st.set_page_config(layout="wide", page_title="Улаанбаатрын автобусний эрэлтийг шинжлэх нь", page_icon=":taxi:")
 
-
-#@st.cache_resource
+all_data=pd.read_csv("map1/df.csv.gz")
+@st.cache_resource
 def load_data(x):
     #path = "combined."
     #if not os.path.isfile(path):
         #path = f"https://github.com/streamlit/demo-uber-nyc-pickups/raw/main/{path}"
 
     data = pd.read_csv(
-        str(x)+'.csv.gz',
+        'map1/'+str(x)+'.csv.gz',
         #nrows=100000,  # approx. 10% of data
         names=[
             "date/time",
@@ -40,7 +40,7 @@ def load_data_off(x):
         #path = f"https://github.com/streamlit/demo-uber-nyc-pickups/raw/main/{path}"
 
     data = pd.read_csv(
-        str(x)+'_off.csv.gz',
+        'map1/'+str(x)+'_off.csv.gz',
         #nrows=100000,  # approx. 10% of data
         names=[
             "date/time",
@@ -57,11 +57,14 @@ def load_data_off(x):
     return data
 
 
+#def toolpick(lat):
+    #return all_data.loc[all_data['lat']==lat,'name_x'].iloc[0]
 
 def map(data, lat, lon, zoom):
+    #t=toolpick(lat)
     st.write(
         pdk.Deck(
-            map_style="mapbox://styles/mapbox/light-v9",
+            map_style="mapbox://styles/mapbox/outdoors-v9",
             initial_view_state={
                 "latitude": lat,
                 "longitude": lon,
@@ -73,6 +76,7 @@ def map(data, lat, lon, zoom):
                     "HexagonLayer",
                     data=data,
                     get_position=["lon", "lat"],
+                    auto_highlight=True,
                     radius=100,
                     elevation_scale=4,
                     elevation_range=[0, 1000],
@@ -80,13 +84,17 @@ def map(data, lat, lon, zoom):
                     extruded=True,
                 ),
             ],
+            #tooltip={
+            #"html": "<b>adresse:</b> {lat}",
+            #"style": {"color": "white"},
+            #},
         )
     )
     
 def map_off(data, lat, lon, zoom):
     st.write(
         pdk.Deck(
-            map_style="mapbox://styles/mapbox/light-v9",
+            map_style="mapbox://styles/mapbox/outdoors-v9",
             initial_view_state={
                 "latitude": lat,
                 "longitude": lon,
@@ -108,18 +116,18 @@ def map_off(data, lat, lon, zoom):
         )
     )
 
-
-#@st.cache_data
+    
+@st.cache_data
 def filterdata(df, hour_selected):
     return df[df["date/time"].dt.hour == hour_selected]
 
 
-#@st.cache_data
+@st.cache_data
 def mpoint(lat, lon):
     return (np.average(lat), np.average(lon))
 
 
-#@st.cache_data
+@st.cache_data
 def histdata(df, hr):
     filtered = data[
         (df["date/time"].dt.hour >= hr) & (df["date/time"].dt.hour < (hr + 1))
@@ -156,7 +164,7 @@ with row1_2:
     st.write(
         """
     ##
-    Улаанбаатарын 3 сарын 6-ны өдрийн нийт автобусаар үйлчлүүлэгчдийн картаа даран зорчсон өгөгдлийг ашиглан энэхүү 3D heatmap-ийг боловсруулав.
+    Улаанбаатарын 3 сарын 6-ны өдрийн нийт автобусаар үйлчлүүлэгчдийн картаа даран зорчсон өгөгдлийг ашиглан энэхүү 3D map-ийг боловсруулав.
     """
     )
     st.write(
@@ -165,7 +173,7 @@ with row1_2:
     """
     )
     
-tab1, tab2 = st.tabs(["3D heatmap", "Өгөгдлийн шинжилгээ"])
+tab1, tab2 = st.tabs(["3D map", "Өгөгдлийн шинжилгээ"])
 
 with tab1:
     row11_1, row11_2, row11_3 = st.columns((3,3,1))
@@ -215,7 +223,7 @@ with tab1:
 
 
 
-    all_data=pd.read_csv("df.csv.gz")
+    
     if genre != "Нийт":
         sorted_genre = all_data.loc[all_data['Төрөл'].isin([str(genre)])]
     else:
@@ -224,8 +232,8 @@ with tab1:
 
     result = sorted_time.groupby(sorted_time['name_x']).count().reset_index().sort_values('Төрөл',ascending=False)
     result2 = sorted_time.groupby(sorted_time['Чиглэл']).count().reset_index().sort_values('Төрөл',ascending=False)
-    result = result.rename(columns={'name_x': 'Автобусны буудал','Төрөл':'Эрэлт'})
-    result2 = result2.rename(columns={'Төрөл':'Эрэлт'})
+    result = result.rename(columns={'name_x': 'Автобусны буудал','Төрөл':'Ачаалал'})
+    result2 = result2.rename(columns={'Төрөл':'Ачаалал'})
 
 
     chart_data = histdata(data, hour_selected)
@@ -241,17 +249,31 @@ with tab1:
 
     with row3_1:
         st.write(
-        f"""**Хамгийн эрэлттэй автобусны буудлууд**"""
+        f"""**Хамгийн ачаалалтай автобусны буудлууд**"""
         )
-        result=result[['Автобусны буудал','Эрэлт']][:10].reset_index(drop=True)
-        st.bar_chart(result,x='Автобусны буудал',y='Эрэлт',height=430)
+        result=result[['Автобусны буудал','Ачаалал']][:25].reset_index(drop=True)
+        #color='#9abddc'
+        #color="rgb(235, 225, 214)
+        bar_chart = alt.Chart(result).mark_bar(color="rgb(74, 130, 191)").encode(
+            x='Ачаалал',
+            y=alt.Y('Автобусны буудал', sort="-x")
+        )
+ 
+        st.altair_chart(bar_chart, use_container_width=True)
+        #st.bar_chart(result,x='Эрэлт',y='Автобусны буудал')#height=430)
 
     with row3_2:
         st.write(
-        f"""**Хамгийн эрэлттэй автобусны чиглэлүүд**"""
+        f"""**Хамгийн ачаалалтай автобусны чиглэлүүд**"""
         )
-        result2=result2[['Чиглэл','Эрэлт']][:10].reset_index(drop=True)
-        st.bar_chart(result2,x='Чиглэл',y='Эрэлт')
+        result2=result2[['Чиглэл','Ачаалал']][:25].reset_index(drop=True)
+        bar_chart = alt.Chart(result2).mark_bar( color="rgb(74, 130, 191)").encode(
+            x='Ачаалал',
+            y=alt.Y('Чиглэл', sort="-x")
+        )
+ 
+        st.altair_chart(bar_chart, use_container_width=True)
+        #st.bar_chart(result2,x='Чиглэл',y='Эрэлт')
         
 with tab2:
     row5_1, row5_2,row5_3 = st.columns((1,3,1))
@@ -261,56 +283,56 @@ with tab2:
         st.header("Шинжилгээнээс гарсан график мэдээллүүд")
         st.markdown("Смарт картын өгөгдөлд 2 өдөр байсан. Үүнд эхнийх нь нэг дахь өдөр буюу жирийн ажлын өдөр 3 сарын 6-н, нөгөө нь 3 сарын 8-н буюу бүх нийтийн амралтын өдөр Мартын 8-н байсан. Heatmap-д үзүүлсэн 3 сарын 6-ны жирийн өдөр нь Улаанбаатар хотын жирийн нэгэн дундаж түгжрээтэй өдөр тул heatmap-д сонгосон болно. Мөн өгөгдсөн өгөгдөл дээр байршлийг нэмж оруулахад 20 мянган nan value өгсөн нь нийт датаны нэг хувь байсан тул heatmap-д оруулагүй ба үүнд Монгол улсын их сургуулийн буудал багтсанд хүлцэл өчий.")
         st.markdown("Цаашид баяжуулах төлөвлөгөөний хувьд би сургуулиудын байршлыг оруулан хамгийн их ачаалалтай байршилд байгаа сургуулиудыг тодруулахыг хүсэж байна. Мөн автобусны чиглэлийн зам дагуу байдлаар 2D heatmap тус цагын тус байрлалын дундаж хурдаар нь хийж өгвөл улаанбаатрын түгжрэлийг googlemap-ийн улаан шар ногоон өнгөөс илүү бодитоогоор харж чадна гэж бодож байна.Мөн илүү их датан дээр Machine learning ашиглан хүмүүсыг яаж ямар автобусаар явбал хурдан байх вэ гэдгийг тооцоолдог модел хийж болох юм.")
-        image1 = Image.open('1.JPG')
+        image1 = Image.open('eda/1.JPG')
         st.caption("   *Хоцрохгүйг хичээж байгаатай холбоотойгоор өглөө бол нийтийн тээврийн хамгийн их ачааллын үе.")
         st.image(image1, caption='Зураг 1')
         
         st.caption("   *Харин амралтын өдөр бол өөр хэрэг.")
-        image2 = Image.open('2.jpg')
+        image2 = Image.open('eda/2.jpg')
         st.image(image2, caption='Зураг 2')
         
         st.caption("   *Дараах графикаас насны онцлогийг харж болно.")
-        image3 = Image.open('3.JPG')
+        image3 = Image.open('eda/3.JPG')
         st.image(image3, caption='Зураг 3')
         
         st.caption("   *Ахмадууд маань мартын 8-нд арай илүү идвэхитэй байна.")
-        image4 = Image.open('4.JPG')
+        image4 = Image.open('eda/4.JPG')
         st.image(image4, caption='Зураг 4')
         
-        image5 = Image.open('5.JPG')
+        image5 = Image.open('eda/5.JPG')
         st.image(image5, caption='Зураг 5')
         st.markdown("Ч-1 нь Таван шар-Офицеруудын ордон чиглэлийн автобус бол Ч-59 нь ХМК-Офицеруудын ордон чиглэлийн тролейбус юм.")
         
         
-        image6 = Image.open('6.JPG')
+        image6 = Image.open('eda/6.JPG')
         st.image(image6, caption='Зураг 6')
         
         st.caption("   *Төв замын автобуснууд хамгийн их ачаалалтай байна.")
-        image7= Image.open('7.JPG')
+        image7= Image.open('eda/7.JPG')
         st.image(image7, caption='Зураг 7')
         
-        image8 = Image.open('8.JPG')
+        image8 = Image.open('eda/8.JPG')
         st.image(image8, caption='Зураг 8')
             
-        image9 = Image.open('9.JPG')
+        image9 = Image.open('eda/9.JPG')
         st.image(image9, caption='Зураг 9')
         
-        image10 = Image.open('10.JPG')
+        image10 = Image.open('eda/10.JPG')
         st.image(image10, caption='Зураг 10')
         
-        image11 = Image.open('11.JPG')
+        image11 = Image.open('eda/11.JPG')
         st.image(image11 , caption='Зураг 11 ')
         
-        image12  = Image.open('12.JPG')
+        image12  = Image.open('eda/12.JPG')
         st.image(image12, caption='Зураг 12')
          
         st.caption("   *Смарт карт өгөгдлийн хоорондын хамаарал.")    
-        image13 = Image.open('13.JPG')
+        image13 = Image.open('eda/13.JPG')
         st.image(image13, caption='Зураг 13')
         
         
         st.caption("   *Автобусанд картаа дарсан хүмүүсийн харьцаа.")
-        image14 = Image.open('14.JPG')
+        image14 = Image.open('eda/14.JPG')
         st.image(image14, caption='Зураг 14')
         
         st.header("Анхаарал тавьсанд баярлалаа")
