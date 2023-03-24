@@ -64,7 +64,7 @@ def map(data, lat, lon, zoom):
     #t=toolpick(lat)
     st.write(
         pdk.Deck(
-            map_style="mapbox://styles/mapbox/outdoors-v9",
+            map_style="mapbox://styles/mapbox/light-v9",
             initial_view_state={
                 "latitude": lat,
                 "longitude": lon,
@@ -94,7 +94,7 @@ def map(data, lat, lon, zoom):
 def map_off(data, lat, lon, zoom):
     st.write(
         pdk.Deck(
-            map_style="mapbox://styles/mapbox/outdoors-v9",
+            map_style="mapbox://styles/mapbox/light-v9",
             initial_view_state={
                 "latitude": lat,
                 "longitude": lon,
