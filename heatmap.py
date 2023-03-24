@@ -33,7 +33,7 @@ def load_data(x):
     )
 
     return data
-
+@st.cache_resource
 def load_data_off(x):
     #path = "combined."
     #if not os.path.isfile(path):
@@ -76,7 +76,7 @@ def map(data, lat, lon, zoom):
                     "HexagonLayer",
                     data=data,
                     get_position=["lon", "lat"],
-                    auto_highlight=True,
+                    #auto_highlight=True,
                     radius=100,
                     elevation_scale=4,
                     elevation_range=[0, 1000],
@@ -128,17 +128,46 @@ def mpoint(lat, lon):
 
 
 @st.cache_data
-def histdata(df, hr):
-    filtered = data[
-        (df["date/time"].dt.hour >= hr) & (df["date/time"].dt.hour < (hr + 1))
-    ]
-
-    hist = np.histogram(filtered["date/time"].dt.minute, bins=60, range=(0, 60))[0]
-
-    return pd.DataFrame({"minute": range(60), "pickups": hist})
-
-
-
+def choice_to_df(genre, all_data,hour_selected):
+    if genre != "Нийт":
+        sorted_genre = all_data.loc[all_data['Төрөл'].isin([str(genre)])]
+    else:
+        sorted_genre= all_data
+    sorted_time=sorted_genre.loc[sorted_genre['hour'].isin([hour_selected])]
+    return sorted_time
+@st.cache_data
+def result1_sorter(sorted_time):
+    result = sorted_time.groupby(sorted_time['name_x']).count().reset_index().sort_values('Төрөл',ascending=False)
+    result = result.rename(columns={'name_x': 'Автобусны буудал','Төрөл':'Ачаалал'})
+    return result
+@st.cache_data  
+def result2_sorter(sorted_time):    
+    result2 = sorted_time.groupby(sorted_time['Чиглэл']).count().reset_index().sort_values('Төрөл',ascending=False)
+    result2 = result2.rename(columns={'Төрөл':'Ачаалал'})
+    return result2
+@st.cache_data
+def chart_maker1(result):
+        result=result[['Автобусны буудал','Ачаалал']][:25].reset_index(drop=True)
+        #color='#9abddc'
+        #color="rgb(235, 225, 214)
+        bar_chart = alt.Chart(result).mark_bar(color="rgb(74, 130, 191)").encode(
+            x='Ачаалал',
+            y=alt.Y('Автобусны буудал', sort="-x")
+        )
+ 
+        return st.altair_chart(bar_chart, use_container_width=True)
+        #st.bar_chart(result,x='Эрэлт',y='Автобусны буудал')#height=430)
+@st.cache_data
+def chart_maker2(result2):   
+        result2=result2[['Чиглэл','Ачаалал']][:25].reset_index(drop=True)
+        bar_chart = alt.Chart(result2).mark_bar( color="rgb(74, 130, 191)").encode(
+            x='Ачаалал',
+            y=alt.Y('Чиглэл', sort="-x")
+        )
+ 
+        return st.altair_chart(bar_chart, use_container_width=True)
+        #st.bar_chart(result2,x='Чиглэл',y='Эрэлт')    
+    
 row1_1, row1_2 = st.columns((3, 4))
 
 
@@ -220,23 +249,12 @@ with tab1:
             f"""**Тус цагт автобуснаас картаа дарж буух хүмүүсийн ачаалал**"""
         )
         map_off(filterdata(data_off, hour_selected), midpoint[0], midpoint[1], 11)
-
-
-
+        
+    result= result1_sorter(choice_to_df(genre,all_data,hour_selected))
     
-    if genre != "Нийт":
-        sorted_genre = all_data.loc[all_data['Төрөл'].isin([str(genre)])]
-    else:
-        sorted_genre= all_data
-    sorted_time=sorted_genre.loc[sorted_genre['hour'].isin([hour_selected])]
+    result2= result2_sorter(choice_to_df(genre,all_data,hour_selected))
 
-    result = sorted_time.groupby(sorted_time['name_x']).count().reset_index().sort_values('Төрөл',ascending=False)
-    result2 = sorted_time.groupby(sorted_time['Чиглэл']).count().reset_index().sort_values('Төрөл',ascending=False)
-    result = result.rename(columns={'name_x': 'Автобусны буудал','Төрөл':'Ачаалал'})
-    result2 = result2.rename(columns={'Төрөл':'Ачаалал'})
-
-
-    chart_data = histdata(data, hour_selected)
+    #chart_data = histdata(data, hour_selected)
 
 
     row4_1, row4_2,row4_3 = st.columns((3,1,4))
@@ -251,29 +269,15 @@ with tab1:
         st.write(
         f"""**Хамгийн ачаалалтай автобусны буудлууд**"""
         )
-        result=result[['Автобусны буудал','Ачаалал']][:25].reset_index(drop=True)
-        #color='#9abddc'
-        #color="rgb(235, 225, 214)
-        bar_chart = alt.Chart(result).mark_bar(color="rgb(74, 130, 191)").encode(
-            x='Ачаалал',
-            y=alt.Y('Автобусны буудал', sort="-x")
-        )
- 
-        st.altair_chart(bar_chart, use_container_width=True)
-        #st.bar_chart(result,x='Эрэлт',y='Автобусны буудал')#height=430)
+        chart_maker1(result)
+
 
     with row3_2:
         st.write(
         f"""**Хамгийн ачаалалтай автобусны чиглэлүүд**"""
         )
-        result2=result2[['Чиглэл','Ачаалал']][:25].reset_index(drop=True)
-        bar_chart = alt.Chart(result2).mark_bar( color="rgb(74, 130, 191)").encode(
-            x='Ачаалал',
-            y=alt.Y('Чиглэл', sort="-x")
-        )
- 
-        st.altair_chart(bar_chart, use_container_width=True)
-        #st.bar_chart(result2,x='Чиглэл',y='Эрэлт')
+        chart_maker2(result2)
+
         
 with tab2:
     row5_1, row5_2,row5_3 = st.columns((1,3,1))
