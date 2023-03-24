@@ -260,7 +260,7 @@ with tab1:
         st.write(
         f"""**Хамгийн ачаалалтай автобусны буудлууд**"""
         )
-        bar_chart = alt.Chart(chart_maker(result)).mark_bar(color="rgb(74, 130, 191)").encode(
+        bar_chart = alt.Chart(chart_maker1(result)).mark_bar(color="rgb(74, 130, 191)").encode(
             x='Ачаалал',
             y=alt.Y('Автобусны буудал', sort="-x")
         )
