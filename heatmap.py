@@ -150,22 +150,13 @@ def chart_maker1(result):
         result=result[['Автобусны буудал','Ачаалал']][:25].reset_index(drop=True)
         #color='#9abddc'
         #color="rgb(235, 225, 214)
-        bar_chart = alt.Chart(result).mark_bar(color="rgb(74, 130, 191)").encode(
-            x='Ачаалал',
-            y=alt.Y('Автобусны буудал', sort="-x")
-        )
- 
-        return st.altair_chart(bar_chart, use_container_width=True)
+        return result
         #st.bar_chart(result,x='Эрэлт',y='Автобусны буудал')#height=430)
 @st.cache_data
 def chart_maker2(result2):   
         result2=result2[['Чиглэл','Ачаалал']][:25].reset_index(drop=True)
-        bar_chart = alt.Chart(result2).mark_bar( color="rgb(74, 130, 191)").encode(
-            x='Ачаалал',
-            y=alt.Y('Чиглэл', sort="-x")
-        )
- 
-        return st.altair_chart(bar_chart, use_container_width=True)
+        return result2
+       
         #st.bar_chart(result2,x='Чиглэл',y='Эрэлт')    
     
 row1_1, row1_2 = st.columns((3, 4))
@@ -269,14 +260,24 @@ with tab1:
         st.write(
         f"""**Хамгийн ачаалалтай автобусны буудлууд**"""
         )
-        chart_maker1(result)
+        bar_chart = alt.Chart(chart_maker(result)).mark_bar(color="rgb(74, 130, 191)").encode(
+            x='Ачаалал',
+            y=alt.Y('Автобусны буудал', sort="-x")
+        )
+ 
+        st.altair_chart(bar_chart, use_container_width=True)
 
 
     with row3_2:
         st.write(
         f"""**Хамгийн ачаалалтай автобусны чиглэлүүд**"""
         )
-        chart_maker2(result2)
+        bar_chart = alt.Chart(chart_maker2(result2)).mark_bar( color="rgb(74, 130, 191)").encode(
+            x='Ачаалал',
+            y=alt.Y('Чиглэл', sort="-x")
+        )
+ 
+        st.altair_chart(bar_chart, use_container_width=True)
 
         
 with tab2:
